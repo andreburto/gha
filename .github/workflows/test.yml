@@ -1,0 +1,9 @@
+name: GHA Test
+
+on: [push]
+
+jobs:
+  This is a test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "This is a test."
