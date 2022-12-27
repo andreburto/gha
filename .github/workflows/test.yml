@@ -14,3 +14,5 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Show Python version.
         run: python -V
+      - name: Show all files.
+        run: ls -al
