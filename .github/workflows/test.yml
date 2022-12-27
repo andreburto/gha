@@ -5,5 +5,12 @@ on: [push]
 jobs:
   This-Is-A-Test:
     runs-on: ubuntu-latest
+    env:
+      PYTHON_VERSION: "3.9"
     steps:
-      - run: echo "This is a test."
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Show Python version.
+        run: python -V
