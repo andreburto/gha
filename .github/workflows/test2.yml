@@ -10,8 +10,6 @@ jobs:
     strategy:
       matrix:
         streamer: [Kirsche, Pippa, Jelly, Lottie]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: andreburto/gha/.github/workflows/reusable-workflow.yml@master
-      with:
-        greet-who: ${{ matrix.streamer }}
+    uses: andreburto/gha/.github/workflows/reusable-workflow.yml@master
+    with:
+      greet-who: ${{ matrix.streamer }}
