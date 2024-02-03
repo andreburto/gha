@@ -8,7 +8,7 @@ on:
         type: string
     outputs:
       greeting:
-        value: ${{ steps.greeting.outputs.greeting }}
+        value: ${{ jobs.greeting.outputs.greeting }}
 
 jobs:
   greeting:
@@ -16,6 +16,5 @@ jobs:
     outputs:
       greeting: ${{ steps.greeting.outputs.greeting }}
     steps:
-      - name: Greet
-        id: greeting
+      - id: greeting
         run: echo 'greeting="Hello ${{ inputs.greet-who }}!"' >> $GITHUB_OUTPUT
