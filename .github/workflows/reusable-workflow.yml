@@ -12,4 +12,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Greet
-        run: echo "Hello ${{ inputs.greet-who }}!"
+        run: echo "Hello ${{ inputs.greet-who }}!" >> $GITHUB_OUTPUT
