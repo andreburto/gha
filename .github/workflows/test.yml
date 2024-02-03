@@ -18,10 +18,9 @@ jobs:
       - uses: ./.github/templates/test-paths
         with:
           who-to-greet: 'Plan'
-          action-path: 'plan'
   Apply:
     runs-on: ubuntu-latest
-    needs: Plan
+    needs: [Plan]
     steps:
       - uses: actions/checkout@v3
       - run: ls -al
