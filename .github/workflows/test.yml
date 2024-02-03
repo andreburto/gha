@@ -21,6 +21,7 @@ jobs:
           action-path: 'plan'
   Apply:
     runs-on: ubuntu-latest
+    needs: Plan
     steps:
       - uses: actions/checkout@v3
       - run: ls -al
