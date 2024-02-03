@@ -17,4 +17,4 @@ jobs:
       greeting: ${{ steps.greeting.outputs.greeting }}
     steps:
       - id: greeting
-        run: echo 'greeting="Hello ${{ inputs.greet-who }}!"' >> $GITHUB_OUTPUT
+        run: echo 'greeting="Hello ${{ inputs.greet-who }}!"' >> $GITHUB_STEP_SUMMARY
