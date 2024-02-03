@@ -6,10 +6,16 @@ on:
       greet-who:
         required: true
         type: string
+    outputs:
+      greeting:
+        value: ${{ steps.greeting.outputs.greeting }}
 
 jobs:
   greeting:
     runs-on: ubuntu-latest
+    outputs:
+      greeting: ${{ steps.greeting.outputs.greeting }}
     steps:
       - name: Greet
-        run: echo "Hello ${{ inputs.greet-who }}!" >> $GITHUB_OUTPUT
+        id: greeting
+        run: echo 'greeting="Hello ${{ inputs.greet-who }}!"' >> $GITHUB_OUTPUT
