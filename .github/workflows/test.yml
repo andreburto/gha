@@ -5,11 +5,16 @@ on:
     branches:
       - master
 
+permissions:
+  actions: write
+  id-token: write
+
 jobs:
   Plan:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - run: ls -al
       - uses: ./.github/templates/test-paths
         with:
           who-to-greet: 'Plan'
@@ -18,6 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - run: ls -al
       - uses: ./.github/templates/test-paths
         with:
           action-path: 'apply'
