@@ -1,19 +1,23 @@
 name: GHA Test
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
-  This-Is-A-Test:
+  Plan:
     runs-on: ubuntu-latest
-    env:
-      PYTHON_VERSION: "3.9"
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v4
+      - uses: ./.github/templates/test-paths
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Show Python version.
-        run: python -V
-      - name: Show all files.
-        run: ls -al
+          who-to-greet: 'Plan'
+          action-path: 'plan'
+  Apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/templates/test-paths
+        with:
+          action-path: 'apply'

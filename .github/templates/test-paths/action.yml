@@ -1,0 +1,35 @@
+name: 'Test Path
+description: 'Test paths based on an input.'
+
+inputs:
+  who-to-greet:  # id of input
+    description: 'Who to greet'
+    required: true
+    default: 'World'
+  action-path:
+    description: 'Path to the action'
+    required: true
+    default: 'plan'
+
+runs:
+  using: "composite"
+  steps:
+    - id: make-file
+      if: ${{ inputs.apply == 'plan' }}
+      run: echo "Hello ${{ inputs.who-to-greet }}" > hello.txt
+      shell: bash
+    - id: save-file
+      if: ${{ inputs.apply == 'plan' }}
+      uses: actions/upload-artifact@v3
+      with:
+          name: greetings
+          path: hello.txt
+    - id: load-file
+      if: ${{ inputs.apply == 'apply' }}
+      uses: actions/download-artifact@v3
+      with:
+          name: greetings
+    - id: show-file
+      if: ${{ inputs.apply == 'apply' }}
+      run: cat hello.txt
+      shell: bash
