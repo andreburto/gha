@@ -3,7 +3,7 @@ name: GHA Test
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   Plan:
