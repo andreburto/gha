@@ -4,10 +4,6 @@ on:
   push:
     branches:
       - master
-#
-#permissions:
-#  actions: write
-#  id-token: write
 
 jobs:
   Plan:

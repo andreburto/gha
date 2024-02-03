@@ -2,7 +2,7 @@ name: 'Test Path'
 description: 'Test paths based on an input.'
 
 inputs:
-  who-to-greet:  # id of input
+  who-to-greet:
     description: 'Who to greet'
     required: true
     default: 'World'

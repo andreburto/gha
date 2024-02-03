@@ -1,0 +1,17 @@
+name: Say Hi
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  greeting:
+    strategy:
+      matrix:
+        streamer: [Kirsche, Pippa, Jelly, Lottie]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: andreburto/gha/.github/workflows/reusable-workflow.yml@master
+      with:
+        greet-who: ${{ matrix.streamer }}
