@@ -15,21 +15,21 @@ runs:
   using: "composite"
   steps:
     - id: make-file
-      if: ${{ inputs.apply == 'plan' }}
+      if: ${{ inputs.action-path == 'plan' }}
       run: echo "Hello ${{ inputs.who-to-greet }}" > hello.txt
       shell: bash
     - id: save-file
-      if: ${{ inputs.apply == 'plan' }}
+      if: ${{ inputs.action-path == 'plan' }}
       uses: actions/upload-artifact@v3
       with:
           name: greetings
           path: hello.txt
     - id: load-file
-      if: ${{ inputs.apply == 'apply' }}
+      if: ${{ inputs.action-path == 'apply' }}
       uses: actions/download-artifact@v3
       with:
           name: greetings
     - id: show-file
-      if: ${{ inputs.apply == 'apply' }}
+      if: ${{ inputs.action-path == 'apply' }}
       run: cat hello.txt
       shell: bash
