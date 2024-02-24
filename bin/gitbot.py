@@ -28,7 +28,7 @@ def main() -> None:
 
     print(dir(args))
 
-    auth = Auth.Token(os.getenv(args.api_key))
+    auth = Auth.Token(args.api_key)
 
     # Public Web Github
     g = Github(auth=auth)
