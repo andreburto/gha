@@ -4,7 +4,7 @@ import os
 from github import Auth, Github
 
 
-auth = Auth.Token(os.getenv("GITHUB_API_TOKEN"))
+auth = Auth.Token(os.getenv("GH_API_KEY"))
 
 # Public Web Github
 g = Github(auth=auth)

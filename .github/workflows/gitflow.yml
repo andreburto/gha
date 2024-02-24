@@ -9,6 +9,9 @@ on:
       - hotfix/*
       - release/*
 
+env:
+  GH_API_KEY: ${{ secrets.GH_API_KEY }}
+
 jobs:
   show-env:
     runs-on: ubuntu-latest
