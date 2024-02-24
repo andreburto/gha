@@ -1,5 +1,6 @@
 import argparse
 import os
+import sys
 
 from github import Auth, Github
 from sh import git
@@ -40,8 +41,16 @@ def main() -> None:
 
     g.close()
 
+    if "feature" in args.branch:
+        print("This is a feature branch")
+        sys.exit()
+
     git.fetch("--all")
     git.checkout("master")
+    git.merge(args.branch)
+    git.checkout("feature/test")
+    git.commit("-am", "Test Commit")
+    git.push()
 
 
 if __name__ == "__main__":
