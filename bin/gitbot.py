@@ -40,6 +40,7 @@ def main() -> None:
 
     g.close()
 
+    git.fetch("--all")
     git.checkout("master")
 
 
