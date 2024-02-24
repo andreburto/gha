@@ -1,0 +1,30 @@
+name: Show ENV
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - feature/*
+      - hotfix/*
+      - release/*
+
+jobs:
+  show-env:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the project
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Show the files
+        run: |
+          ls -al
+          pwd
+          python -V
+      - name: Install Requirements
+        run: |
+          pip install -r requirements.txt
+      - name: Run gitbot.py
+        run: |
+          python ./bin/gitbot.py
