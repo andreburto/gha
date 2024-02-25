@@ -46,10 +46,9 @@ def main() -> None:
         sys.exit()
 
     git.fetch("--all")
-    print(git.branch())
     git.checkout("master")
+    git.checkout("-b", "feature/test")
     git.merge(args.branch)
-    git.checkout("feature/test")
     git.commit("-am", "Test Commit")
     git.push()
 
