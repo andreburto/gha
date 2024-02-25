@@ -45,7 +45,10 @@ def main() -> None:
         print("This is a feature branch")
         sys.exit()
 
+
+
     git.fetch("--all")
+    print(git.branch())
     git.checkout("master")
     git.merge(args.branch)
     git.checkout("feature/test")
