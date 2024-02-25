@@ -17,7 +17,7 @@ def setup_args() -> argparse.ArgumentParser:
     parser.add_argument("--api-key", dest="api_key", type=str,
                         default=os.getenv(GITHUB_API_TOKEN_KEY),
                         help="The API key to use for working in this repo.")
-    parser.add_argument("--branch", dest="branch", type=str, default=os.getenv("GITHUB_REF"),
+    parser.add_argument("--branch", dest="branch", type=str, default=os.getenv("GITHUB_REF_NAME"),
                         help="The branch to work with")
     parser.add_argument("--repo", dest="repo", type=str, default=os.getenv("GITHUB_REPOSITORY"),
                         help="The repository to work with")
@@ -44,8 +44,6 @@ def main() -> None:
     if "feature" in args.branch:
         print("This is a feature branch")
         sys.exit()
-
-
 
     git.fetch("--all")
     print(git.branch())
