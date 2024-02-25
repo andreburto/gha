@@ -1,14 +1,13 @@
+import sys
+
 from sh import git
 
 __author__ = "Andrew Burton"
 
 
 def main() -> None:
-    git.fetch("--all")
-    git.checkout("master")
-    git.checkout("-b", "feature/test")
-    git.commit("-am", "Test Commit")
-    git.push()
+    l = git.log("--oneline", "-n", "5", _out=sys.stdout, _err=sys.stderr)
+    print(l)
 
 
 if __name__ == "__main__":
