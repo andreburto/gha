@@ -11,7 +11,7 @@ __author__ = "Andrew Burton"
 GITHUB_API_TOKEN_KEY = "GH_API_KEY"
 
 
-def setup_args() -> argparse.ArgumentParser:
+def setup_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(prog="gitbot", description="Gitbot for Github",
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--api-key", dest="api_key", type=str,
@@ -31,7 +31,7 @@ def main() -> None:
 
     auth = Auth.Token(args.api_key)
 
-    # Public Web Github
+    # Public Web GitHYub
     g = Github(auth=auth)
 
     repo = g.get_repo(args.repo)
@@ -46,9 +46,9 @@ def main() -> None:
         sys.exit()
 
     git.fetch("--all")
-    git.checkout("master")
+    git.checkout(args.branch)
     git.checkout("-b", "feature/test")
-    git.merge(args.branch)
+    git.merge("master")
     git.commit("-am", "Test Commit")
     git.push()
 
