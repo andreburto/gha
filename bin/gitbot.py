@@ -2,6 +2,7 @@ import argparse
 import os
 import sys
 
+from datetime import datetime
 from github import Auth, Github
 from sh import git
 
@@ -24,36 +25,60 @@ def setup_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def pick_target_branch(source_branch: str) -> str:
+    target_by_branch = {
+        "feature": "develop",
+        "hotfix": "master",
+        "release": "master",
+        "bugfix": "develop",
+        "develop": "release",
+    }
+    branch_key = source_branch.split("/")[0]
+    target_branch = target_by_branch[branch_key]
+    print(f"pick_target_branch - Source: {source_branch}, Target: {target_branch}")
+    return target_branch
+
+
+def feature_branch(args: argparse.Namespace, github_object: Github) -> None:
+    target_branch = pick_target_branch(args.branch)
+    repo = github_object.get_repo(args.repo)
+    pr = repo.create_pull(title="Feature Branch",
+                          body="This is a feature branch",
+                          head=args.branch,
+                          base=target_branch)
+    return pr
+
+
+def develop_branch(args: argparse.Namespace, github_object: Github) -> None:
+    repo = github_object.get_repo(args.repo)
+    date_time_str = datetime.now().strftime("%Y%m%d%H%M%S")
+    git.checkout("-b", f"release/{date_time_str}")
+    git.push("--set-upstream", "origin", f"release/{date_time_str}")
+
+
 def main() -> None:
+    function_by_branch = {
+        "feature": feature_branch,
+        "develop": develop_branch,
+    }
+
     args = setup_args()
 
     print(dir(args))
 
-    auth = Auth.Token(args.api_key)
-
     # Public Web GitHYub
-    g = Github(auth=auth)
+    auth_token = Auth.Token(args.api_key)
+    g = Github(auth=auth_token)
 
-    repo = g.get_repo(args.repo)
-    branch = repo.get_branch(args.branch)
-
-    print(dir(branch))
+    try:
+        source_branch = str(args.branch).split("/")[0]
+        function_by_branch[source_branch](args, g)
+    except KeyError:
+        print(f"Branch function {source_branch} not supported.")
+    except Exception as e:
+        print(f"Error: {e}")
 
     g.close()
-
-    if "feature" in args.branch:
-        print("This is a feature branch")
-        sys.exit()
-
-    f = git.fetch("--all", "-v", _out=sys.stdout, _err=sys.stderr)
-    print(f)
-    b = git.branch("-a", _out=sys.stdout, _err=sys.stderr)
-    print(b)
-    git.checkout(args.branch)
-    git.checkout("-b", "feature/test")
-    git.merge("master")
-    git.commit("-am", "Test Commit")
-    git.push()
 
 
 if __name__ == "__main__":
