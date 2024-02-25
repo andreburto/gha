@@ -14,7 +14,7 @@ def main() -> None:
     last_merge_log_line = git.log("--no-color", "--oneline", "-n", "1")
 
     if not MERGE_INDICATOR in last_merge_log_line:
-        print("Last commit was not the merge, exiting")
+        print("Last commit was not the merge, exiting.")
         sys.exit(0)
 
     pr_number = last_merge_log_line.split(MERGE_INDICATOR)[1].split(" ")[1].replace("#", "")
