@@ -1,15 +1,24 @@
 import argparse
+import github
 import os
 import sys
 
 from datetime import datetime
-from github import Auth, Github
 from sh import git
 
 __author__ = "Andrew Burton"
 
 # Global Variables
 GITHUB_API_TOKEN_KEY = "GH_API_KEY"
+PR_BODY_TEMPLATE = """
+Story: 
+
+Description:
+
+Source branch: {source_branch}
+
+Target branch: {target_branch}
+"""
 
 
 def setup_args() -> argparse.Namespace:
@@ -39,18 +48,27 @@ def pick_target_branch(source_branch: str) -> str:
     return target_branch
 
 
-def feature_branch(args: argparse.Namespace, github_object: Github) -> None:
+def find_previous_merge_from_branches() -> str:
+    """
+    """
+    pass
+
+
+def feature_branch(args: argparse.Namespace, repo: github.Repository) -> None:
+    """
+    """
     target_branch = pick_target_branch(args.branch)
-    repo = github_object.get_repo(args.repo)
-    pr = repo.create_pull(title="Feature Branch",
-                          body="This is a feature branch",
+    pr = repo.create_pull(title=args.branch,
+                          body=PR_BODY_TEMPLATE.format(source_branch=args.branch,
+                                                       target_branch=target_branch),
                           head=args.branch,
                           base=target_branch)
     return pr
 
 
-def develop_branch(args: argparse.Namespace, github_object: Github) -> None:
-    repo = github_object.get_repo(args.repo)
+def develop_branch(args: argparse.Namespace, repo: github.Repository) -> None:
+    """
+    """
     date_time_str = datetime.now().strftime("%Y%m%d%H%M%S")
     git.checkout("-b", f"release/{date_time_str}")
     git.push("--set-upstream", "origin", f"release/{date_time_str}")
@@ -64,17 +82,16 @@ def main() -> None:
 
     args = setup_args()
 
-    print(dir(args))
-
     # Public Web GitHYub
-    auth_token = Auth.Token(args.api_key)
-    g = Github(auth=auth_token)
+    auth_token = github.Auth.Token(args.api_key)
+    github_object = github.Github(auth=auth_token)
+    repo = github_object.get_repo(args.repo)
 
     try:
         source_branch = str(args.branch).split("/")[0]
-        function_by_branch[source_branch](args, g)
+        function_by_branch[source_branch](args, repo)
     except KeyError:
-        print(f"Branch function {source_branch} not supported.")
+        print(f"Function for {source_branch} not supported.")
     except Exception as e:
         print(f"Error: {e}")
 
