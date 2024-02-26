@@ -60,7 +60,7 @@ def pick_target_branch(source_branch: str) -> str:
 def get_previous_pull_request(repo: github.Repository) -> github.PullRequest:
     """
     """
-    last_merge_log_line = git.log("--no-color", "--oneline", "-n", "1")
+    last_merge_log_line = git.log("--oneline", "-n", "1")
     logger.info(f"Last merge log line: {last_merge_log_line}")
     logger.info(f"Last merge log line type: {type(last_merge_log_line)}")
     matches = re.findall(r"#\d+", last_merge_log_line)
