@@ -29,6 +29,5 @@ def main() -> None:
     print(f"Source branch: {pr.head.ref}")
 
 
-
 if __name__ == "__main__":
     main()
