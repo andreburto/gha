@@ -2,6 +2,7 @@ import argparse
 import github
 import logging
 import os
+import re
 import sys
 
 from datetime import datetime
@@ -59,15 +60,13 @@ def pick_target_branch(source_branch: str) -> str:
 def get_previous_pull_request(repo: github.Repository) -> github.PullRequest:
     """
     """
-    last_merge_log_line = git.log("--no-color", "--oneline", "-n", "1", _out=sys.stdout)
-    last_merge_log_line = git.log("--no-color", "--oneline", "-n", "10", _out=sys.stdout)
     last_merge_log_line = git.log("--no-color", "--oneline", "-n", "1")
-    logger.info(f"Last merge log line: {last_merge_log_line}")
+    matches = re.findall(r"#\d+", last_merge_log_line)
 
-    if not MERGE_INDICATOR in last_merge_log_line:
+    if not matches:
         return None
 
-    pr_number = last_merge_log_line.split(MERGE_INDICATOR)[1].split(" ")[1].replace("#", "")
+    pr_number = matches[-1].replace("#", "")
     pr = repo.get_pull(int(pr_number))
     return pr
 
