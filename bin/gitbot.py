@@ -59,11 +59,12 @@ def pick_target_branch(source_branch: str) -> str:
 def get_previous_pull_request(repo: github.Repository) -> github.PullRequest:
     """
     """
+    last_merge_log_line = git.log("--no-color", "--oneline", "-n", "1", _out=sys.stdout)
+    last_merge_log_line = git.log("--no-color", "--oneline", "-n", "10", _out=sys.stdout)
     last_merge_log_line = git.log("--no-color", "--oneline", "-n", "1")
     logger.info(f"Last merge log line: {last_merge_log_line}")
 
     if not MERGE_INDICATOR in last_merge_log_line:
-        logger.info("Last commit was not the merge, exiting.")
         return None
 
     pr_number = last_merge_log_line.split(MERGE_INDICATOR)[1].split(" ")[1].replace("#", "")
@@ -77,6 +78,7 @@ def pull_request_exists(args: argparse.Namespace, repo: github.Repository) -> bo
     target_branch = pick_target_branch(args.branch)
     prs = repo.get_pulls(state="open", sort="created", base=target_branch)
     for pr in prs:
+        logger.info(f"PR: {pr}")
         if pr.head.ref == args.branch:
             return True
     return False
