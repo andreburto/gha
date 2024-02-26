@@ -1,15 +1,32 @@
 import argparse
+import github
+import logging
 import os
 import sys
 
 from datetime import datetime
-from github import Auth, Github
 from sh import git
 
 __author__ = "Andrew Burton"
 
 # Global Variables
 GITHUB_API_TOKEN_KEY = "GH_API_KEY"
+MERGE_INDICATOR = "Merge pull request"
+PR_BODY_TEMPLATE = """
+Story: 
+
+Description:
+
+Source branch: {source_branch}
+
+Target branch: {target_branch}
+"""
+
+# Set up logging
+log_level = logging.DEBUG if str(os.getenv("DEBUG", "false")).lower() == "true" else logging.INFO
+logger = logging.getLogger(__file__)
+logger.setLevel(log_level)
+logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 
 
 def setup_args() -> argparse.Namespace:
@@ -35,50 +52,117 @@ def pick_target_branch(source_branch: str) -> str:
     }
     branch_key = source_branch.split("/")[0]
     target_branch = target_by_branch[branch_key]
-    print(f"pick_target_branch - Source: {source_branch}, Target: {target_branch}")
+    logger.info(f"pick_target_branch - Source: {source_branch}, Target: {target_branch}")
     return target_branch
 
 
-def feature_branch(args: argparse.Namespace, github_object: Github) -> None:
-    target_branch = pick_target_branch(args.branch)
-    repo = github_object.get_repo(args.repo)
-    pr = repo.create_pull(title="Feature Branch",
-                          body="This is a feature branch",
-                          head=args.branch,
-                          base=target_branch)
+def get_previous_pull_request(repo: github.Repository) -> github.PullRequest:
+    """
+    """
+    last_merge_log_line = git.log("--no-color", "--oneline", "-n", "1")
+
+    if not MERGE_INDICATOR in last_merge_log_line:
+        logger.info("Last commit was not the merge, exiting.")
+        return None
+
+    pr_number = last_merge_log_line.split(MERGE_INDICATOR)[1].split(" ")[1].replace("#", "")
+    pr = repo.get_pull(int(pr_number))
     return pr
 
 
-def develop_branch(args: argparse.Namespace, github_object: Github) -> None:
-    repo = github_object.get_repo(args.repo)
-    date_time_str = datetime.now().strftime("%Y%m%d%H%M%S")
-    git.checkout("-b", f"release/{date_time_str}")
-    git.push("--set-upstream", "origin", f"release/{date_time_str}")
+def pull_request_exists(args: argparse.Namespace, repo: github.Repository) -> bool:
+    """
+    """
+    target_branch = pick_target_branch(args.branch)
+    prs = repo.get_pulls(state="open", sort="created", base=target_branch)
+    for pr in prs:
+        if pr.head.ref == args.branch:
+            return True
+    return False
+
+
+def feature_branch(args: argparse.Namespace, repo: github.Repository) -> None:
+    """
+    """
+    if pull_request_exists(args, repo):
+        logger.info(f"Pull request for {args.branch} already exists.")
+        return
+
+    target_branch = pick_target_branch(args.branch)
+    repo.create_pull(
+        title=args.branch,
+        body=PR_BODY_TEMPLATE.format(source_branch=args.branch, target_branch=target_branch),
+        head=args.branch,
+        base=target_branch)
+
+
+def develop_branch(args: argparse.Namespace, repo: github.Repository) -> None:
+    """
+    """
+    pr = get_previous_pull_request(repo)
+
+    if pr is None:
+        logger.info("No previous pull request found.")
+        return
+
+    branch_prefix = pick_target_branch(args.branch)
+    branch_suffix = pr.head.ref.split("/", 1)[1]
+    release_branch_name = f"{branch_prefix}/{branch_suffix}"
+
+    git.checkout("-b", release_branch_name)
+    git.push("--set-upstream", "origin", release_branch_name)
+
+
+def release_branch(args: argparse.Namespace, repo: github.Repository) -> None:
+    """
+    """
+    if pull_request_exists(args, repo):
+        logger.info(f"Pull request for {args.branch} already exists.")
+        return
+
+    target_branch = pick_target_branch(args.branch)
+    repo.create_pull(
+        title=args.branch,
+        body=PR_BODY_TEMPLATE.format(source_branch=args.branch, target_branch=target_branch),
+        head=args.branch,
+        base=target_branch)
+
+
+def master_branch(args: argparse.Namespace, repo: github.Repository) -> None:
+    pass
+
+
+def hotfix_branch(args: argparse.Namespace, repo: github.Repository) -> None:
+    pass
 
 
 def main() -> None:
+    """
+    """
     function_by_branch = {
         "feature": feature_branch,
         "develop": develop_branch,
+        "release": release_branch,
+        "master": master_branch,
+        "hotfix": hotfix_branch,
     }
 
     args = setup_args()
 
-    print(dir(args))
-
     # Public Web GitHYub
-    auth_token = Auth.Token(args.api_key)
-    g = Github(auth=auth_token)
+    auth_token = github.Auth.Token(args.api_key)
+    github_object = github.Github(auth=auth_token)
+    repo = github_object.get_repo(args.repo)
 
     try:
         source_branch = str(args.branch).split("/")[0]
-        function_by_branch[source_branch](args, g)
+        function_by_branch[source_branch](args, repo)
     except KeyError:
-        print(f"Branch function {source_branch} not supported.")
+        print(f"Function for {source_branch} not supported.")
     except Exception as e:
         print(f"Error: {e}")
 
-    g.close()
+    github_object.close()
 
 
 if __name__ == "__main__":
