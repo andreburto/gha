@@ -78,6 +78,7 @@ def pull_request_exists(args: argparse.Namespace, repo: github.Repository) -> bo
     target_branch = pick_target_branch(args.branch)
     prs = repo.get_pulls(state="open", sort="created", base=target_branch)
     for pr in prs:
+        logger.info(f"PR: {pr}")
         if pr.head.ref == args.branch:
             return True
     return False
