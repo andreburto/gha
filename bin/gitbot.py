@@ -162,7 +162,7 @@ def main() -> None:
     except Exception as e:
         print(f"Error: {e}")
 
-    g.close()
+    github_object.close()
 
 
 if __name__ == "__main__":
