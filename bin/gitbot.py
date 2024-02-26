@@ -61,8 +61,10 @@ def get_previous_pull_request(repo: github.Repository) -> github.PullRequest:
     """
     """
     last_merge_log_line = git.log("--no-color", "--oneline", "-n", "1")
+    logger.info(f"Last merge log line: {last_merge_log_line}")
+    logger.info(f"Last merge log line type: {type(last_merge_log_line)}")
     matches = re.findall(r"#\d+", last_merge_log_line)
-
+    logger.info(f"Matches: {matches}")
     if not matches:
         return None
 
