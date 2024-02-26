@@ -60,6 +60,7 @@ def get_previous_pull_request(repo: github.Repository) -> github.PullRequest:
     """
     """
     last_merge_log_line = git.log("--no-color", "--oneline", "-n", "1")
+    logger.info(f"Last merge log line: {last_merge_log_line}")
 
     if not MERGE_INDICATOR in last_merge_log_line:
         logger.info("Last commit was not the merge, exiting.")
