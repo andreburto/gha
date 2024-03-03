@@ -1,0 +1,38 @@
+name: GitFlow
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - bugfix/*
+      - feature/*
+      - hotfix/*
+      - release/*
+
+env:
+  GH_API_KEY: ${{ secrets.GH_API_KEY }}
+
+jobs:
+  show-env:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the project
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+          token: ${{ secrets.GH_API_KEY }}
+          persist-credentials: true
+      - name: Show the files
+        run: |
+          pwd
+          ls -al
+      - name: Show the Python version
+        run: python -V
+      - name: Debug
+        run: git remote -v
+      - name: Install Requirements
+        run: pip install -r requirements.txt
+      - name: Run gitbot.py
+        run: python ./bin/gitbot.py
