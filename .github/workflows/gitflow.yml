@@ -8,7 +8,7 @@ on:
       - bugfix/*
       - feature/*
       - hotfix/*
-      - release/*
+      - release*
 
 env:
   GH_API_KEY: ${{ secrets.GH_API_KEY }}
