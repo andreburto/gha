@@ -109,7 +109,7 @@ def intermediary_branches(args: argparse.Namespace, repo: github.Repository) -> 
         base=target_branch)
 
 
-def main_branches(args: argparse.Namespace, repo: github.Repository) -> None:
+def develop_branch(args: argparse.Namespace, repo: github.Repository) -> None:
     """
     """
     pr = get_previous_pull_request(repo)
