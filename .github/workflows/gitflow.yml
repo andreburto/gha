@@ -8,7 +8,7 @@ on:
       - bugfix/*
       - feature/*
       - hotfix/*
-      - release*
+      - release/*
 
 env:
   GH_API_KEY: ${{ secrets.GH_API_KEY }}
@@ -28,6 +28,8 @@ jobs:
           ls -al
       - name: Show the Python version
         run: python -V
+      - name: Debug
+        run: git origin -v
       - name: Install Requirements
         run: pip install -r requirements.txt
       - name: Run gitbot.py
