@@ -130,6 +130,7 @@ def develop_branch(args: argparse.Namespace, repo: github.Repository) -> None:
     release_branch_name = f"{branch_prefix}/{branch_suffix}-to-{PROD_BRANCH}"
 
     fix_origin_url()
+    git.fetch("--all", "-v")
     git.checkout(PROD_BRANCH)
     git.checkout("-b", release_branch_name)
     git.merge(NONPROD_BRANCH)
