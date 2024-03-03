@@ -2,7 +2,10 @@ import gitbot
 import github
 import logging
 import os
+import re
 import sys
+
+from sh import git
 
 __author__ = "Andrew Burton"
 
@@ -17,13 +20,11 @@ logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 
 def main() -> None:
 
-    auth_token = github.Auth.Token(GITHUB_API_TOKEN)
-    github_object = github.Github(auth=auth_token)
-    repo = github_object.get_repo("andreburto/gha")
-
-    pr = gitbot.get_previous_pull_request(repo)
-
-    print(pr)
+    last_merge_log_line = git.log(pretty='format:"%s"', n=1, _tty_out=False)
+    logger.info(f"Last merge log line: {last_merge_log_line}")
+    logger.info(f"Last merge log line type: {type(last_merge_log_line)}")
+    matches = re.findall(r"#\d+", last_merge_log_line)
+    logger.info(f"Matches: {matches}")
 
 
 if __name__ == "__main__":

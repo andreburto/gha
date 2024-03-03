@@ -60,7 +60,7 @@ def pick_target_branch(source_branch: str) -> str:
 def get_previous_pull_request(repo: github.Repository) -> github.PullRequest:
     """
     """
-    last_merge_log_line = git.log("--oneline", "-n", "1")
+    last_merge_log_line = git.log(pretty='format:"%s"', n=1, _tty_out=False)
     logger.info(f"Last merge log line: {last_merge_log_line}")
     logger.info(f"Last merge log line type: {type(last_merge_log_line)}")
     matches = re.findall(r"#\d+", last_merge_log_line)
@@ -100,7 +100,7 @@ def feature_branch(args: argparse.Namespace, repo: github.Repository) -> None:
         base=target_branch)
 
 
-def develop_branch(args: argparse.Namespace, repo: github.Repository) -> None:
+def main_branches(args: argparse.Namespace, repo: github.Repository) -> None:
     """
     """
     pr = get_previous_pull_request(repo)
@@ -117,19 +117,19 @@ def develop_branch(args: argparse.Namespace, repo: github.Repository) -> None:
     git.push("--set-upstream", "origin", release_branch_name)
 
 
-def release_branch(args: argparse.Namespace, repo: github.Repository) -> None:
-    """
-    """
-    if pull_request_exists(args, repo):
-        logger.info(f"Pull request for {args.branch} already exists.")
-        return
-
-    target_branch = pick_target_branch(args.branch)
-    repo.create_pull(
-        title=args.branch,
-        body=PR_BODY_TEMPLATE.format(source_branch=args.branch, target_branch=target_branch),
-        head=args.branch,
-        base=target_branch)
+# def release_branch(args: argparse.Namespace, repo: github.Repository) -> None:
+#     """
+#     """
+#     if pull_request_exists(args, repo):
+#         logger.info(f"Pull request for {args.branch} already exists.")
+#         return
+#
+#     target_branch = pick_target_branch(args.branch)
+#     repo.create_pull(
+#         title=args.branch,
+#         body=PR_BODY_TEMPLATE.format(source_branch=args.branch, target_branch=target_branch),
+#         head=args.branch,
+#         base=target_branch)
 
 
 def master_branch(args: argparse.Namespace, repo: github.Repository) -> None:
@@ -145,8 +145,8 @@ def main() -> None:
     """
     function_by_branch = {
         "feature": feature_branch,
-        "develop": develop_branch,
-        "release": release_branch,
+        "develop": main_branches,
+        "release": main_branches,
         "master": master_branch,
         "hotfix": hotfix_branch,
     }
