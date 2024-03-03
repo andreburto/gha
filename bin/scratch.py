@@ -20,10 +20,7 @@ logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 
 def main() -> None:
 
-    last_merge_log_line = git.log(
-        pretty='format:"%h - %an, %ar : %s"',
-        n=50,
-        _tty_out=False)
+    last_merge_log_line = git.log(pretty='format:"%s"', n=1, _tty_out=False)
     logger.info(f"Last merge log line: {last_merge_log_line}")
     logger.info(f"Last merge log line type: {type(last_merge_log_line)}")
     matches = re.findall(r"#\d+", last_merge_log_line)
