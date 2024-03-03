@@ -24,19 +24,11 @@ jobs:
           fetch-depth: 0
       - name: Show the files
         run: |
-          ls -al
           pwd
-          python -V
+          ls -al
+      - name: Show the Python version
+        run: python -V
       - name: Install Requirements
-        run: |
-          pip install -r requirements.txt
-      - name: Debug
-        run: |
-          git log --oneline -n 1
-          echo "---"
-          git log --no-color --oneline -n 1
-          echo "---"
-          git log --no-color --oneline -n 10
+        run: pip install -r requirements.txt
       - name: Run gitbot.py
-        run: |
-          python ./bin/scratch.py
+        run: python ./bin/gitbot.py
