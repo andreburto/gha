@@ -29,7 +29,7 @@ jobs:
       - name: Show the Python version
         run: python -V
       - name: Debug
-        run: git origin -v
+        run: git remote -v
       - name: Install Requirements
         run: pip install -r requirements.txt
       - name: Run gitbot.py
