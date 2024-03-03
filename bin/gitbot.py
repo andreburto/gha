@@ -120,7 +120,7 @@ def develop_branch(args: argparse.Namespace, repo: github.Repository) -> None:
 
     git.checkout(PROD_BRANCH)
     git.checkout("-b", release_branch_name)
-    git.merge(pr.head.ref)
+    git.merge(NONPROD_BRANCH)
     git.push("--set-upstream", "origin", release_branch_name)
 
 
