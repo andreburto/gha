@@ -82,6 +82,17 @@ def get_previous_pull_request(repo: github.Repository) -> github.PullRequest:
     return pr
 
 
+def fix_origin_url() -> None:
+    """
+    """
+    repo_url = str(os.getenv("GITHUB_SERVER_URL")).split("//")[1]
+    repo_path = os.getenv("GITHUB_REPOSITORY")
+    api_key = os.getenv(GITHUB_API_TOKEN_KEY)
+    new_origin_url = f"https://{api_key}@{repo_url}/{repo_path}"
+    git.remote("remove", "origin")
+    git.remote("add", "origin", new_origin_url)
+
+
 def pull_request_exists(args: argparse.Namespace, repo: github.Repository) -> bool:
     """
     """
@@ -118,6 +129,7 @@ def develop_branch(args: argparse.Namespace, repo: github.Repository) -> None:
     branch_suffix = pr.head.ref.split("/", 1)[1]
     release_branch_name = f"{branch_prefix}/{branch_suffix}-to-{PROD_BRANCH}"
 
+    fix_origin_url()
     git.checkout(PROD_BRANCH)
     git.checkout("-b", release_branch_name)
     git.merge(NONPROD_BRANCH)
