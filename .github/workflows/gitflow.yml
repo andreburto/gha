@@ -39,4 +39,4 @@ jobs:
           git log --no-color --oneline -n 10
       - name: Run gitbot.py
         run: |
-          python ./bin/gitbot.py
+          python ./bin/scratch.py
