@@ -1,4 +1,4 @@
-name: Show ENV
+name: GitFlow
 
 on:
   push:
