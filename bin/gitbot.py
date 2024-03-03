@@ -118,7 +118,9 @@ def develop_branch(args: argparse.Namespace, repo: github.Repository) -> None:
     branch_suffix = pr.head.ref.split("/", 1)[1]
     release_branch_name = f"{branch_prefix}/{branch_suffix}-to-{PROD_BRANCH}"
 
+    git.checkout(PROD_BRANCH)
     git.checkout("-b", release_branch_name)
+    git.merge(pr.head.ref)
     git.push("--set-upstream", "origin", release_branch_name)
 
 
