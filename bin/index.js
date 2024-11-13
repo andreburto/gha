@@ -12,6 +12,6 @@ pgclient.connect();
 
 pgclient.query('SELECT 1+1 AS result', (err, res) => {
     if (err) throw err
-    console.log(err, res.rows) // Print the data in student table
+    console.log(res.rows) // Print the data in student table
     pgclient.end()
 });
