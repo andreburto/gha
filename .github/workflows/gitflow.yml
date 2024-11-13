@@ -1,14 +1,15 @@
 name: GitFlow
 
 on:
-  push:
-    branches:
-      - master
-      - develop
-      - bugfix/*
-      - feature/*
-      - hotfix/*
-      - release/*
+  workflow_dispatch:
+#  push:
+#    branches:
+#      - master
+#      - develop
+#      - bugfix/*
+#      - feature/*
+#      - hotfix/*
+#      - release/*
 
 env:
   GH_API_KEY: ${{ secrets.GH_API_KEY }}

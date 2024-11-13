@@ -1,0 +1,19 @@
+name: Say Hi
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+      - develop
+
+jobs:
+  Plan:
+    runs-on: ubuntu-latest
+    container: node:18
+    steps:
+      - uses: actions/checkout@v3
+      - name: Show the files
+        run: |
+          pwd
+          ls -al
